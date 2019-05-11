@@ -1,0 +1,27 @@
+{
+  "name": "uni-info-system",
+  "version": "1.0.0",
+  "description": "University Information System",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "nodemon src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ann-maier/uni-info-system.git"
+  },
+  "author": "Anna Maier",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ann-maier/uni-info-system/issues"
+  },
+  "homepage": "https://github.com/ann-maier/uni-info-system#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.0"
+  }
+}
