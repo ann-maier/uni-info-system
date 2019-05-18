@@ -1,4 +1,4 @@
-## Information System of University
+## Information System of the University
 
 ```
 npm install
