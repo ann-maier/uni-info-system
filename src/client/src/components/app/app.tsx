@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 
 import { AssessmentComponent } from '../assessment/assessment';
 import { HTTP } from '../http/user';
-import { User } from '../http/user.interface';
+import { UserDTO } from '../http/user.interface';
 
 const App: React.FC = () => {
-  const [user, setUser] = useState<User>({ id: '', firstName: '', lastName: '', group: '', subjects: [] });
+  const [user, setUser] = useState<UserDTO>({ id: '', firstName: '', lastName: '', group: '', subjects: [] });
 
   useEffect(() => {
     const httpObservable = HTTP.getInstance();
-    httpObservable.subscribe((user: User) => setUser(user));
+    httpObservable.subscribe((user: UserDTO) => setUser(user));
     httpObservable.notify();
   }, []);
 

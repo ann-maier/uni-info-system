@@ -1,7 +1,7 @@
 import React from 'react';
 
 import './assessment.css';
-import { User, Subject } from '../http/user.interface';
+import { UserDTO, Subject } from '../http/user.interface';
 
 interface TableProps {
   subjects: Subject[];
@@ -31,7 +31,7 @@ const TableComponent: React.SFC<TableProps> = ({ subjects }) => (
 );
 
 interface AssessmentProps {
-  user: User;
+  user: UserDTO;
   className?: string;
 }
 

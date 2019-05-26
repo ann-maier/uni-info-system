@@ -1,4 +1,4 @@
-import { HTTP, getUsers } from './user';
+import { HTTP, User } from './user';
 import axios, { AxiosResponse } from 'axios';
 
 jest.mock('axios');
@@ -54,10 +54,11 @@ describe('HTTP', () => {
 
 describe('getUsers', () => {
   it('should fetch user info', async () => {
+    const user = new User();
     const mockResponse = { data: 'user data' };
     mockedAxios.get.mockReturnValueOnce(Promise.resolve(mockResponse as AxiosResponse));
 
-    const result = await getUsers('/test');
+    const result = await user.getUsers('/test');
 
     expect(result).toBe(mockResponse);
   });

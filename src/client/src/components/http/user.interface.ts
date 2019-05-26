@@ -1,5 +1,7 @@
-const USER_ID: string = '5cd71bafdc1fa62330b7423f';
-export const GET_USER_API: string = `/users/${USER_ID}`;
+import { AxiosPromise } from "axios";
+
+const USER_ID = '5cd71bafdc1fa62330b7423f';
+export const GET_USER_API = `/users/${USER_ID}`;
 
 export interface Subject {
   id: string,
@@ -9,6 +11,10 @@ export interface Subject {
 }
 
 export interface User {
+  getUsers: () => AxiosPromise
+}
+
+export interface UserDTO {
   id: string,
   firstName: string,
   lastName: string,

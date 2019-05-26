@@ -1,10 +1,7 @@
 import axios from 'axios';
+import { AxiosResponse } from 'axios';
 
-import { GET_USER_API, User, Observable } from './user.interface';
-
-const getUsers = (URL: string) => {
-  return axios.get(URL);
-}
+import { GET_USER_API, Observable } from './user.interface';
 
 class HTTP implements Observable {
   observers: Function[];
@@ -23,8 +20,19 @@ class HTTP implements Observable {
   }
 
   notify() {
-    getUsers(GET_USER_API)
-      .then(({ data }) => this.observers.forEach(observer => observer(new UserProxy(data))));
+    const userProxy = new UserProxy();
+    userProxy.getUsers(GET_USER_API)
+      .then(({ data }: AxiosResponse) => this.observers.forEach(observer => {
+        const { _id, first_name, last_name, group, subjects } = data;
+        observer({
+          id: _id,
+          firstName: first_name,
+          lastName: last_name,
+          group,
+          subjects: subjects.map(({ subject, assessment, lecturer }: any) =>
+            ({ id: subject._id, subject: subject.subject, assessment, lecturer }))
+        });
+      }));
   }
 
   static getInstance(): HTTP {
@@ -35,23 +43,22 @@ class HTTP implements Observable {
   }
 }
 
-class UserProxy implements User {
-  id: string;
-  lastName: string;
-  firstName: string;
-  group: string;
-  subjects: [];
-
-  constructor(user: any) {
-    this.id = user._id;
-    this.firstName = user.first_name;
-    this.lastName = user.last_name;
-    this.group = user.group;
-    this.subjects = user.subjects.map(({ subject, assessment, lecturer }
-      : { subject: any, assessment: string, lecturer: string }) =>
-      ({ id: subject._id, subject: subject.subject, assessment, lecturer })
-    );
+class User implements User {
+  getUsers(URL: string) {
+    return axios.get(URL);
   }
 }
 
-export { HTTP, getUsers };
+class UserProxy implements User {
+  private realUser: User = new User();
+  private realCache: any = {};
+
+  getUsers(URL: string) {
+    if (!this.realCache[URL]) {
+      this.realCache[URL] = this.realUser.getUsers(URL);
+    }
+    return this.realCache[URL];
+  }
+}
+
+export { HTTP, User };
