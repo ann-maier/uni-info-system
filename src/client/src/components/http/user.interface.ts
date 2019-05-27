@@ -1,5 +1,3 @@
-import { AxiosPromise } from "axios";
-
 const USER_ID = '5cd71bafdc1fa62330b7423f';
 export const GET_USER_API = `/users/${USER_ID}`;
 
@@ -11,7 +9,7 @@ export interface Subject {
 }
 
 export interface User {
-  getUsers: () => AxiosPromise
+  getUsers: () => UserDTO
 }
 
 export interface UserDTO {
@@ -25,5 +23,5 @@ export interface UserDTO {
 export interface Observable {
   subscribe: (observer: Function) => void,
   unsubscribe: (observer: Function) => void,
-  notify: () => void
+  notify: (data: UserDTO) => void
 }

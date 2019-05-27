@@ -1,13 +1,13 @@
-import { HTTP, User } from './user';
+import { UserHTTP, User } from './user';
 import axios, { AxiosResponse } from 'axios';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-describe('HTTP', () => {
+describe('UserHTTP', () => {
   describe('unsubscribe', () => {
     it('should remove subscriptions', () => {
-      const http: HTTP = HTTP.getInstance();
+      const http: UserHTTP = UserHTTP.getInstance();
       const subscriber = jest.fn((data) => console.log('I am subscriber!', data));
 
       http.subscribe(subscriber);
@@ -20,7 +20,7 @@ describe('HTTP', () => {
 
   describe('subscribe', () => {
     it('should add subscriptions', () => {
-      const http: HTTP = HTTP.getInstance();
+      const http: UserHTTP = UserHTTP.getInstance();
       const subscriber = jest.fn((data) => console.log('I am subscriber!', data));
 
       http.subscribe(subscriber);
@@ -30,22 +30,10 @@ describe('HTTP', () => {
     });
   });
 
-  describe('notify', () => {
-    it('should fetch users when notify is fired', () => {
-      const mockResponse = { data: 'user data' };
-      mockedAxios.get.mockReturnValueOnce(Promise.resolve(mockResponse as AxiosResponse));
-
-      const http: HTTP = HTTP.getInstance();
-      http.notify();
-
-      expect(mockedAxios.get).toHaveBeenCalled();
-    });
-  });
-
   describe('getInstance', () => {
     it('should return only one instance of the class', () => {
-      const http1: HTTP = HTTP.getInstance();
-      const http2: HTTP = HTTP.getInstance();
+      const http1: UserHTTP = UserHTTP.getInstance();
+      const http2: UserHTTP = UserHTTP.getInstance();
 
       expect(http1).toEqual(http2);
     });
@@ -58,8 +46,8 @@ describe('getUsers', () => {
     const mockResponse = { data: 'user data' };
     mockedAxios.get.mockReturnValueOnce(Promise.resolve(mockResponse as AxiosResponse));
 
-    const result = await user.getUsers('/test');
-
-    expect(result).toBe(mockResponse);
+    user.getUsers('/test');
+    
+    expect(mockedAxios.get).toHaveBeenCalled();
   });
 });

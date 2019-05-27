@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 
 import { AssessmentComponent } from '../assessment/assessment';
-import { HTTP } from '../http/user';
-import { UserDTO } from '../http/user.interface';
+import { UserHTTP } from '../http/user';
+import { GET_USER_API, UserDTO } from '../http/user.interface';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<UserDTO>({ id: '', firstName: '', lastName: '', group: '', subjects: [] });
 
   useEffect(() => {
-    const httpObservable = HTTP.getInstance();
+    const httpObservable = UserHTTP.getInstance();
     httpObservable.subscribe((user: UserDTO) => setUser(user));
-    httpObservable.notify();
+    httpObservable.getUsers(GET_USER_API);
   }, []);
 
   return <AssessmentComponent user={user} />;

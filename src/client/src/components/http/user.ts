@@ -1,11 +1,10 @@
 import axios from 'axios';
-import { AxiosResponse } from 'axios';
 
-import { GET_USER_API, Observable } from './user.interface';
+import { UserDTO, Observable } from './user.interface';
 
-class HTTP implements Observable {
+class UserHTTP implements Observable {
   observers: Function[];
-  private static instance: HTTP;
+  private static instance: UserHTTP;
 
   private constructor() {
     this.observers = [];
@@ -16,49 +15,58 @@ class HTTP implements Observable {
   }
 
   unsubscribe(observer: Function) {
-    this.observers = this.observers.filter(subscriber => subscriber !== observer);
+    this.observers = this.observers.filter(
+      subscriber => subscriber !== observer
+    );
   }
 
-  notify() {
+  async getUsers(URL: string) {
     const userProxy = new UserProxy();
-    userProxy.getUsers(GET_USER_API)
-      .then(({ data }: AxiosResponse) => this.observers.forEach(observer => {
-        const { _id, first_name, last_name, group, subjects } = data;
-        observer({
-          id: _id,
-          firstName: first_name,
-          lastName: last_name,
-          group,
-          subjects: subjects.map(({ subject, assessment, lecturer }: any) =>
-            ({ id: subject._id, subject: subject.subject, assessment, lecturer }))
-        });
-      }));
+    const userData = await userProxy.getUsers(URL);
+    this.notify(userData);
   }
 
-  static getInstance(): HTTP {
-    if (!HTTP.instance) {
-      HTTP.instance = new HTTP();
+  notify(data: UserDTO) {
+    this.observers.forEach(observer => observer(data));
+  }
+
+  static getInstance(): UserHTTP {
+    if (!UserHTTP.instance) {
+      UserHTTP.instance = new UserHTTP();
     }
-    return HTTP.instance;
+    return UserHTTP.instance;
   }
 }
 
 class User implements User {
-  getUsers(URL: string) {
-    return axios.get(URL);
+  async getUsers(URL: string) {
+    const { data } = await axios.get(URL);
+    const { _id, first_name, last_name, group, subjects } = data;
+    return {
+      id: _id,
+      firstName: first_name,
+      lastName: last_name,
+      group,
+      subjects: subjects.map(({ subject, assessment, lecturer }: any) => ({
+        id: subject._id,
+        subject: subject.subject,
+        assessment,
+        lecturer
+      }))
+    };
   }
 }
 
 class UserProxy implements User {
   private realUser: User = new User();
-  private realCache: any = {};
+  private realCache: { [URL: string]: UserDTO } = {};
 
-  getUsers(URL: string) {
+  async getUsers(URL: string) {
     if (!this.realCache[URL]) {
-      this.realCache[URL] = this.realUser.getUsers(URL);
+      this.realCache[URL] = await this.realUser.getUsers(URL);
     }
     return this.realCache[URL];
   }
 }
 
-export { HTTP, User };
+export { UserHTTP, User };
